@@ -1,9 +1,10 @@
-from django.contrib.forms import UserCreationForm
-from django.contrib.model import User
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django import forms
+# from .models import Record
 
 
-class SignupForm(UserCreationForm):
+class SignUpForm(UserCreationForm):
     email = forms.EmailField(label='', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'email'}))
     first_name = forms.CharField(label='', max_length=30, widget=forms.TextInput(
@@ -61,6 +62,6 @@ class AddRecordForm(forms.ModelForm):
     zipcode = forms.CharField(required=True, widget=forms.widgets.TextInput(
         attrs={"placeholder": "Zipcode", "class": "form-control"}), label="")
 
-    class Meta:
-        model = Record
-        exclude = ("user",)
+    # class Meta:
+    #     model = Record
+    #     exclude = ("user",)

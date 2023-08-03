@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from .forms import SignUpForm
 
 
 def home(request):
@@ -8,15 +9,8 @@ def home(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, "You have successfully logged in")
-            return redirect("home")
-        else:
-            messages.error(request, "Login failed, please try again")
-            return redirect("home")
-    else:
-        return render(request, 'home.html', {})
+        return login_user(request, user)
+    return render(request, 'home.html', {})
 
 
 def logout_user(request):
@@ -26,4 +20,26 @@ def logout_user(request):
 
 
 def register_user(request):
-    return render(request, 'register.html', {})
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your registration form has been saved")
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            user = authenticate(request, username=username, password=password)
+            return login_user(request, user)
+    else:
+        form = SignUpForm()
+        return render(request, 'register.html', {'form': form})
+    return render(request, 'register.html', {'form': form})
+
+
+def login_user(request, user):
+    print(user)
+    if user is not None:
+        login(request, user)
+        messages.success(request, "You have successfully logged in")
+    else:
+        messages.error(request, "Login failed, please try again")
+    return redirect('home')
