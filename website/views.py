@@ -53,13 +53,13 @@ def verify_code(request):
         form = VerifyForm(request.POST)
         if form.is_valid():
             code = form.cleaned_data.get('code')
-            # if check(request.user.phone_number, code):
-            request.user.is_verified = True
-            request.user.save()
-            print("verify_code")
-            return redirect('index')
-            # else:
-            #     return redirect('home')
+            if check(request.user.phone_number, code):
+                request.user.is_verified = True
+                request.user.save()
+                print("verify_code")
+                return redirect('index')
+            else:
+                return redirect('home')
     else:
         form = VerifyForm()
     return render(request, 'verify.html', {'form': form})
