@@ -1,7 +1,13 @@
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from phonenumber_field.formfields import PhoneNumberField
+# from django.contrib.auth.models import User
+from users.models import CustomUser
 from django import forms
 # from .models import Record
+
+
+class VerifyForm(forms.Form):
+    code = forms.CharField(max_length=8, required=True, help_text='Enter code')
 
 
 class SignUpForm(UserCreationForm):
@@ -13,9 +19,9 @@ class SignUpForm(UserCreationForm):
         attrs={'class': 'form-control', 'placeholder': 'last name'}))
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ('username', 'first_name', 'last_name',
-                  'email', 'password1', 'password2')
+                  'email', 'phone_number', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
@@ -24,6 +30,7 @@ class SignUpForm(UserCreationForm):
         self.fields['username'].widget.attrs['placeholder'] = 'User Name'
         self.fields['username'].label = ''
         self.fields['username'].help_text = '<span class="form-text text-muted"><small>Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small></span>'
+        PhoneNumberField
 
         self.fields['password1'].widget.attrs['class'] = 'form-control'
         self.fields['password1'].widget.attrs['placeholder'] = 'Password'
