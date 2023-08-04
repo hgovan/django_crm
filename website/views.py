@@ -15,7 +15,6 @@ def home(request):
 @verification_required
 # @combined_required
 def index(request):
-    print("in")
     return render(request, 'index.html', {})
 
 
@@ -56,7 +55,6 @@ def verify_code(request):
             if check(request.user.phone_number, code):
                 request.user.is_verified = True
                 request.user.save()
-                print("verify_code")
                 return redirect('index')
             else:
                 return redirect('home')
