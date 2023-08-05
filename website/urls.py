@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from django.conf.urls import handler404
+# from django.conf.urls import handler404
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -12,4 +12,4 @@ urlpatterns = [
     path('verify/', views.verify_code, name='verify_code'),
 ]
 
-handler404 = views.custom_404_page
+# handler404 = views.custom_404_page

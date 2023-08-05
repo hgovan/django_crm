@@ -35,11 +35,7 @@ def register_user(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your registration form has been saved")
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(request, username=username, password=password)
-            send(form.cleaned_data['phone'])
-            return login_user(request, user)
+            return redirect('login')
     else:
         form = SignUpForm()
         return render(request, 'register.html', {'form': form})
@@ -48,19 +44,25 @@ def register_user(request):
 
 @login_required
 def verify_code(request):
-    if request.method == 'POST':
-        form = VerifyForm(request.POST)
-        if form.is_valid():
-            code = form.cleaned_data.get('code')
-            if check(request.user.phone_number, code):
-                request.user.is_verified = True
-                request.user.save()
-                return redirect('index')
-            else:
-                return redirect('home')
-    else:
-        form = VerifyForm()
-    return render(request, 'verify.html', {'form': form})
+    user = request.user
+    if user.is_authenticated:
+        if request.method == 'POST':
+            form = VerifyForm(request.POST)
+            if form.is_valid():
+                code = form.cleaned_data.get('code')
+                if check(user.phone_number, code):
+                    user.is_verified = True
+                    user.phone_number_validated = True
+                    user.save()
+                    return redirect('index')
+                else:
+                    return redirect('home')
+        else:
+            form = VerifyForm()
+            phone_number = user.get_phone_number()
+            send(phone_number)
+        return render(request, 'verify.html', {'form': form})
+    return redirect('home')
 
 
 def login_user(request):
@@ -71,8 +73,6 @@ def login_user(request):
         if user is not None:
             login(request, user)
             messages.success(request, "You have successfully logged in")
-            # phone_number = user.get_phone_number()
-            # send(phone_number)
             return redirect('verify_code')
         else:
             messages.error(request, "Login failed, please try again")
@@ -80,5 +80,5 @@ def login_user(request):
     return render(request, 'login_user.html', {})
 
 
-def custom_404_page(request, exception):
-    return render(request, '404.html', status=404)
+# def custom_404_page(request, exception):
+#     return render(request, '404.html', status=404)
