@@ -3,7 +3,7 @@ from phonenumber_field.formfields import PhoneNumberField
 # from django.contrib.auth.models import User
 from users.models import CustomUser
 from django import forms
-# from .models import Record
+from .models import Record
 
 
 class VerifyForm(forms.Form):
@@ -69,6 +69,6 @@ class AddRecordForm(forms.ModelForm):
     zipcode = forms.CharField(required=True, widget=forms.widgets.TextInput(
         attrs={"placeholder": "Zipcode", "class": "form-control"}), label="")
 
-    # class Meta:
-    #     model = Record
-    #     exclude = ("user",)
+    class Meta:
+        model = Record
+        exclude = ("user", )
